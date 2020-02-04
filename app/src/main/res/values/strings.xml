@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">PGA Finder</string>
+    <string name="title_activity_pga_find">Map</string>
+</resources>
