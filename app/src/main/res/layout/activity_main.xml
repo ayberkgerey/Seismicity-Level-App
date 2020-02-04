@@ -9,7 +9,7 @@
 
     <LinearLayout
         android:id="@+id/logoLayout"
-        android:layout_marginTop="150dp"
+        android:layout_marginTop="180dp"
         android:layout_centerHorizontal="true"
         android:orientation="vertical"
         android:layout_width="match_parent"
@@ -49,5 +49,15 @@
     android:layout_width="match_parent"
     android:layout_height="60dp"
     android:layout_below="@+id/logoLayout"/>
+
+    <TextView
+        android:textSize="12sp"
+        android:textColor="#FF0000"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginRight="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Ayberk Gerey©"/>
 
 </RelativeLayout>
