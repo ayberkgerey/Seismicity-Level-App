@@ -7,27 +7,36 @@ import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
+
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 
 public class PgaFindActivity extends FragmentActivity implements OnMapReadyCallback {
+
+
 
     private static final String TAG = "PgaFindActivity";
     private GoogleMap mMap;
     private Boolean mLocationPermissionsGranted = false;
-
+    private FusedLocationProviderClient mFusedLocationProviderClient;
 
     private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
     private static final String COURSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1234;
-
+    private static final float DEFAULT_ZOOM = 15f;
 
 
     @Override
@@ -44,14 +53,62 @@ public class PgaFindActivity extends FragmentActivity implements OnMapReadyCallb
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        Toast.makeText(this,"Map is Ready",Toast.LENGTH_SHORT).show();
+        Log.d(TAG, "onMapReady: Ready");
         mMap = googleMap;
 
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Turkey"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+
+        if(mLocationPermissionsGranted){
+            getDeviceLocation();
+
+            if(ActivityCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this,
+                    Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+                return;
+            }
+            mMap.setMyLocationEnabled(true);
+            mMap.getUiSettings().setMyLocationButtonEnabled(false);
+        }
     }
 
 
+    private void getDeviceLocation(){
+        Log.d(TAG, "getDeviceLocation: getting the device's current location");
+
+        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+        try{
+
+            if(mLocationPermissionsGranted){
+                Task location = mFusedLocationProviderClient.getLastLocation();
+                location.addOnCompleteListener(new OnCompleteListener() {
+                    @Override
+                    public void onComplete(@NonNull Task task) {
+                        if(task.isSuccessful()){
+                            Log.d(TAG, "onComplete: found location!");
+                            Location currentLocation = (Location) task.getResult();
+
+                            moveCamera(new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude()),DEFAULT_ZOOM,"My Location");
+
+                        }else{
+                            Log.d(TAG, "onComplete: current location is null");
+                            Toast.makeText(PgaFindActivity.this,"unable to get current location", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+            }
+
+        }catch(SecurityException e){
+            Log.e(TAG, "getDeviceLocation: Security Exception: "+ e.getMessage());
+        }
+    }
+
+    private void moveCamera(LatLng latlng , float zoom, String title){
+        Log.d(TAG, "moveCamera: moving the camera to lat: "+ latlng.latitude + ", lng: "+ latlng.longitude);
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latlng,zoom));
+
+        MarkerOptions options = new MarkerOptions().position(latlng).title(title);
+        mMap.addMarker(options);
+    }
     private void initMap(){
 
         Log.d(TAG, "initMap: Initializing Map");
@@ -70,13 +127,10 @@ public class PgaFindActivity extends FragmentActivity implements OnMapReadyCallb
                 mLocationPermissionsGranted = true;
                 initMap();
             }
-            else{
-                ActivityCompat.requestPermissions(this,permissions,LOCATION_PERMISSION_REQUEST_CODE);
-            }
+            else{ ActivityCompat.requestPermissions(this,permissions,LOCATION_PERMISSION_REQUEST_CODE); }
         }
-        else{
-            ActivityCompat.requestPermissions(this,permissions,LOCATION_PERMISSION_REQUEST_CODE);
-        }
+
+        else{ ActivityCompat.requestPermissions(this,permissions,LOCATION_PERMISSION_REQUEST_CODE); }
     }
 
 
