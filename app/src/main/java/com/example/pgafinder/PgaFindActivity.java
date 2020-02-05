@@ -24,6 +24,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
+
 public class PgaFindActivity extends FragmentActivity implements OnMapReadyCallback {
 
 
@@ -39,6 +40,8 @@ public class PgaFindActivity extends FragmentActivity implements OnMapReadyCallb
     private static final float DEFAULT_ZOOM = 15f;
 
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,13 +53,11 @@ public class PgaFindActivity extends FragmentActivity implements OnMapReadyCallb
     }
 
 
-
     @Override
     public void onMapReady(GoogleMap googleMap) {
         Toast.makeText(this,"Map is Ready",Toast.LENGTH_SHORT).show();
         Log.d(TAG, "onMapReady: Ready");
         mMap = googleMap;
-
 
         if(mLocationPermissionsGranted){
             getDeviceLocation();
@@ -69,7 +70,27 @@ public class PgaFindActivity extends FragmentActivity implements OnMapReadyCallb
             mMap.setMyLocationEnabled(true);
             mMap.getUiSettings().setMyLocationButtonEnabled(false);
         }
+
+        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng latLng) {
+                //Creating marker
+                MarkerOptions markerOptions = new MarkerOptions();
+                //Set Marker Position
+                markerOptions.position(latLng);
+                //set Latitude And Longitude On Marker
+                markerOptions.title(latLng.latitude+" : " + latLng.longitude);
+                //Clear the Previously Click position
+                mMap.clear();
+                //Zoom The Marker
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,10));
+                //Add Marker On Map
+                mMap.addMarker(markerOptions);
+            }
+        });
+
     }
+
 
 
     private void getDeviceLocation(){
