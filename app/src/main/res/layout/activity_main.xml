@@ -35,13 +35,13 @@
     </LinearLayout>
 
 
-
 <Button
-    android:elevation="10000dp"
-    android:textColor="#FF0000"
+    android:background="@drawable/mybutton"
+    android:elevation="99999dp"
+    android:textColor="#FFFF"
     android:textStyle="bold"
-    android:layout_marginLeft="60dp"
-    android:layout_marginRight="60dp"
+    android:layout_marginLeft="70dp"
+    android:layout_marginRight="70dp"
     android:layout_marginTop="120dp"
     android:textSize="20sp"
     android:text="Go to Map"
@@ -58,6 +58,6 @@
         android:layout_marginRight="10dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Ayberk Gerey©"/>
+        android:text="Created by Ayberk Gerey©"/>
 
 </RelativeLayout>

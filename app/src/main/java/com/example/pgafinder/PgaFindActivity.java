@@ -37,7 +37,7 @@ public class PgaFindActivity extends FragmentActivity implements OnMapReadyCallb
     private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
     private static final String COURSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1234;
-    private static final float DEFAULT_ZOOM = 15f;
+    private static final float DEFAULT_ZOOM = 10f;
 
 
 
@@ -58,6 +58,7 @@ public class PgaFindActivity extends FragmentActivity implements OnMapReadyCallb
         Toast.makeText(this,"Map is Ready",Toast.LENGTH_SHORT).show();
         Log.d(TAG, "onMapReady: Ready");
         mMap = googleMap;
+        mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
 
         if(mLocationPermissionsGranted){
             getDeviceLocation();
