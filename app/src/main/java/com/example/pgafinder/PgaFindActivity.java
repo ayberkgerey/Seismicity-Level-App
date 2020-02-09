@@ -109,7 +109,7 @@ public class PgaFindActivity extends FragmentActivity implements OnMapReadyCallb
                             Log.d(TAG, "onComplete: found location!");
                             Location currentLocation = (Location) task.getResult();
 
-                            moveCamera(new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude()),DEFAULT_ZOOM,"My Location");
+                            moveCamera(new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude()),DEFAULT_ZOOM,currentLocation.getLatitude() +" : " + currentLocation.getLongitude());
 
                         }else{
                             Log.d(TAG, "onComplete: current location is null");
