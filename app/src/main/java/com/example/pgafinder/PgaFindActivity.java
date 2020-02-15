@@ -47,7 +47,6 @@ public class PgaFindActivity extends FragmentActivity implements OnMapReadyCallb
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pga_find);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-
         getLocationPermission();
 
     }
