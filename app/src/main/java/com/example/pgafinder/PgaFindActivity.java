@@ -13,10 +13,12 @@ import android.util.Log;
 import android.widget.Toast;
 
 
+import com.esri.arcgisruntime.layers.KmlLayer;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
@@ -28,6 +30,7 @@ import com.google.android.gms.tasks.Task;
 public class PgaFindActivity extends FragmentActivity implements OnMapReadyCallback {
 
 
+    private MapView mMapView;
 
     private static final String TAG = "PgaFindActivity";
     private GoogleMap mMap;
@@ -40,8 +43,6 @@ public class PgaFindActivity extends FragmentActivity implements OnMapReadyCallb
     private static final float DEFAULT_ZOOM = 10f;
 
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,8 +51,6 @@ public class PgaFindActivity extends FragmentActivity implements OnMapReadyCallb
         getLocationPermission();
 
     }
-
-
     @Override
     public void onMapReady(GoogleMap googleMap) {
         Toast.makeText(this,"Map is Ready",Toast.LENGTH_SHORT).show();
@@ -90,9 +89,6 @@ public class PgaFindActivity extends FragmentActivity implements OnMapReadyCallb
         });
 
     }
-
-
-
     private void getDeviceLocation(){
         Log.d(TAG, "getDeviceLocation: getting the device's current location");
 
@@ -122,7 +118,6 @@ public class PgaFindActivity extends FragmentActivity implements OnMapReadyCallb
             Log.e(TAG, "getDeviceLocation: Security Exception: "+ e.getMessage());
         }
     }
-
     private void moveCamera(LatLng latlng , float zoom, String title){
         Log.d(TAG, "moveCamera: moving the camera to lat: "+ latlng.latitude + ", lng: "+ latlng.longitude);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latlng,zoom));
@@ -137,8 +132,6 @@ public class PgaFindActivity extends FragmentActivity implements OnMapReadyCallb
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
     }
-
-
     private void getLocationPermission(){
         Log.d(TAG, "getLocationPermission: getting location permissions");
         String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
@@ -153,8 +146,6 @@ public class PgaFindActivity extends FragmentActivity implements OnMapReadyCallb
 
         else{ ActivityCompat.requestPermissions(this,permissions,LOCATION_PERMISSION_REQUEST_CODE); }
     }
-
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         Log.d(TAG, "onRequestPermissionsResult: called");

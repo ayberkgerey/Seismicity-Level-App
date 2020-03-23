@@ -30,7 +30,7 @@
             android:textAlignment="center"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="PGA Finder"/>
+            android:text="Earthquake Level"/>
 
     </LinearLayout>
 
@@ -50,14 +50,5 @@
     android:layout_height="60dp"
     android:layout_below="@+id/logoLayout"/>
 
-    <TextView
-        android:textSize="12sp"
-        android:textColor="#FF0000"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginRight="10dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Created by Ayberk Gerey©"/>
 
 </RelativeLayout>
