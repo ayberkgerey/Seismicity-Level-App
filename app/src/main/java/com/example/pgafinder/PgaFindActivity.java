@@ -1,10 +1,5 @@
 package com.example.pgafinder;
 
-import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.FragmentActivity;
-
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -12,13 +7,19 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentActivity;
 
-import com.esri.arcgisruntime.layers.KmlLayer;
+import com.esri.arcgisruntime.mapping.ArcGISMap;
+import com.esri.arcgisruntime.mapping.Basemap;
+import com.esri.arcgisruntime.mapping.view.MapView;
+
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
@@ -29,10 +30,9 @@ import com.google.android.gms.tasks.Task;
 
 public class PgaFindActivity extends FragmentActivity implements OnMapReadyCallback {
 
+    private static final String TAG = "PgaFindActivity";
 
     private MapView mMapView;
-
-    private static final String TAG = "PgaFindActivity";
     private GoogleMap mMap;
     private Boolean mLocationPermissionsGranted = false;
     private FusedLocationProviderClient mFusedLocationProviderClient;
@@ -50,6 +50,9 @@ public class PgaFindActivity extends FragmentActivity implements OnMapReadyCallb
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         getLocationPermission();
 
+        //ArcGis Map
+        mMapView = findViewById(R.id.mapView);
+        setupMap();
     }
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -129,7 +132,7 @@ public class PgaFindActivity extends FragmentActivity implements OnMapReadyCallb
 
         Log.d(TAG, "initMap: Initializing Map");
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.Gmap);
         mapFragment.getMapAsync(this);
     }
     private void getLocationPermission(){
@@ -137,13 +140,10 @@ public class PgaFindActivity extends FragmentActivity implements OnMapReadyCallb
         String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
 
         if(ContextCompat.checkSelfPermission(this.getApplicationContext(),FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
-            if(ContextCompat.checkSelfPermission(this.getApplicationContext(),COURSE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+
                 mLocationPermissionsGranted = true;
                 initMap();
-            }
-            else{ ActivityCompat.requestPermissions(this,permissions,LOCATION_PERMISSION_REQUEST_CODE); }
         }
-
         else{ ActivityCompat.requestPermissions(this,permissions,LOCATION_PERMISSION_REQUEST_CODE); }
     }
     @Override
@@ -168,9 +168,41 @@ public class PgaFindActivity extends FragmentActivity implements OnMapReadyCallb
         }
     }
 
+//Arcgis Map Methods
 
+    private void setupMap() {
+        if (mMapView != null) {
+            Basemap.Type basemapType = Basemap.Type.IMAGERY_WITH_LABELS;
+            double latitude =  39.9255;
+            double longitude = 32.8662;
+            int levelOfDetail = 10;
+            ArcGISMap map = new ArcGISMap(basemapType, latitude, longitude, levelOfDetail);
+            mMapView.setMap(map);
+            Log.d(TAG, "ArcgisMap: ArcgisMap is ready");
+        }
+    }
 
+    @Override
+    protected void onPause() {
+        if (mMapView != null) {
+            mMapView.pause();
+        }
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (mMapView != null) {
+            mMapView.resume();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (mMapView != null) {
+            mMapView.dispose();
+        }
+        super.onDestroy();
+    }
 }
-
-
-
