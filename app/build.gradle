@@ -4,11 +4,6 @@ android {
     compileSdkVersion 29
     buildToolsVersion "29.0.2"
 
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-
     defaultConfig {
         applicationId "com.example.pgafinder"
         minSdkVersion 22
@@ -24,7 +19,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-}
+ }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
@@ -35,13 +30,11 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
     //firebase for google maps
-    implementation 'com.google.firebase:firebase-firestore:21.4.1'
+    implementation 'com.google.firebase:firebase-firestore:21.4.2'
 
     //google maps dependencies
     implementation 'com.google.android.gms:play-services-maps:17.0.0'
     implementation "com.google.android.gms:play-services-location:17.0.0"
-
-    //arcgis
-    implementation 'com.esri.arcgisruntime:arcgis-android:100.7.0'
+    implementation 'com.google.maps.android:android-maps-utils:1.0.2'
 
 }

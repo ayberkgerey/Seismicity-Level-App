@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://www.opengis.net/kml/2.2 http://schemas.opengis.net/kml/2.2.0/ogckml22.xsd http://www.google.com/kml/ext/2.2 http://code.google.com/apis/kml/schema/kml22gx.xsd">
+<Document id="S1_475">
+  <name>S1_475</name>
+  <Snippet></Snippet>
+  <GroundOverlay id="ID_0">
+    <name>S1_475</name>
+    <Snippet></Snippet>
+    <drawOrder>1000</drawOrder>
+    <Icon>
+      <href>Layer0.png</href>
+      <viewBoundScale>1.0</viewBoundScale>
+    </Icon>
+    <LatLonBox>
+      <north>43.8206</north>
+      <south>33.3794</south>
+      <east>48.09060000000001</east>
+      <west>22.4094</west>
+      <rotation>0</rotation>
+    </LatLonBox>
+  </GroundOverlay>
+</Document>
+</kml>

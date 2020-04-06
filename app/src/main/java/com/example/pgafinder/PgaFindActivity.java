@@ -12,20 +12,23 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
-import com.esri.arcgisruntime.mapping.ArcGISMap;
-import com.esri.arcgisruntime.mapping.Basemap;
-import com.esri.arcgisruntime.mapping.view.MapView;
-
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.maps.android.data.kml.KmlLayer;
+
+import org.xmlpull.v1.XmlPullParserException;
+
+import java.io.IOException;
+
 
 
 public class PgaFindActivity extends FragmentActivity implements OnMapReadyCallback {
@@ -47,12 +50,12 @@ public class PgaFindActivity extends FragmentActivity implements OnMapReadyCallb
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pga_find);
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         getLocationPermission();
 
         //ArcGis Map
-        mMapView = findViewById(R.id.mapView);
-        setupMap();
+
     }
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -60,6 +63,19 @@ public class PgaFindActivity extends FragmentActivity implements OnMapReadyCallb
         Log.d(TAG, "onMapReady: Ready");
         mMap = googleMap;
         mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+
+
+        //Kml addition
+        try {
+            KmlLayer layer = new KmlLayer(mMap, R.raw.kml_sources, getApplicationContext());
+            layer.addLayerToMap();
+            Log.d(TAG, "onMapReady: Kml added to map");
+
+        } catch (XmlPullParserException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         if(mLocationPermissionsGranted){
             getDeviceLocation();
@@ -92,6 +108,8 @@ public class PgaFindActivity extends FragmentActivity implements OnMapReadyCallb
         });
 
     }
+
+
     private void getDeviceLocation(){
         Log.d(TAG, "getDeviceLocation: getting the device's current location");
 
@@ -168,41 +186,4 @@ public class PgaFindActivity extends FragmentActivity implements OnMapReadyCallb
         }
     }
 
-//Arcgis Map Methods
-
-    private void setupMap() {
-        if (mMapView != null) {
-            Basemap.Type basemapType = Basemap.Type.IMAGERY_WITH_LABELS;
-            double latitude =  39.9255;
-            double longitude = 32.8662;
-            int levelOfDetail = 10;
-            ArcGISMap map = new ArcGISMap(basemapType, latitude, longitude, levelOfDetail);
-            mMapView.setMap(map);
-            Log.d(TAG, "ArcgisMap: ArcgisMap is ready");
-        }
-    }
-
-    @Override
-    protected void onPause() {
-        if (mMapView != null) {
-            mMapView.pause();
-        }
-        super.onPause();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (mMapView != null) {
-            mMapView.resume();
-        }
-    }
-
-    @Override
-    protected void onDestroy() {
-        if (mMapView != null) {
-            mMapView.dispose();
-        }
-        super.onDestroy();
-    }
 }
