@@ -8,6 +8,7 @@
 
 <h3>Topics</h3>
   <ul>
+  <li>GeoJSON Layer</li>
   <li>Google Maps</li>
   <li>Firestore</li>
   
