@@ -9,7 +9,6 @@
 <h3>Topics</h3>
   <ul>
   <li>Google Maps</li>
-  <li>Esri Arcgis</li>
   <li>Firestore</li>
   
 </ul>
