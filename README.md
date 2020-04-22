@@ -3,7 +3,8 @@
 
   <ul>
   <li>Geolocation added.</li>
-  <li>Arcgis Map and Google Maps initialized</li>
+  <li>Google Maps initialized</li>
+  <li>KML Layer Used</li>
 </ul>
 
 <h3>Topics</h3>
