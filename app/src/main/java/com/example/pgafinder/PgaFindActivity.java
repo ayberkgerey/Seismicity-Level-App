@@ -23,12 +23,13 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.maps.android.data.kml.KmlLayer;
+import com.google.maps.android.data.geojson.GeoJsonLayer;
 
-import org.xmlpull.v1.XmlPullParserException;
+import org.json.JSONException;
 
 import java.io.IOException;
 
+import static com.example.pgafinder.R.raw.sources;
 
 
 public class PgaFindActivity extends FragmentActivity implements OnMapReadyCallback {
@@ -41,10 +42,8 @@ public class PgaFindActivity extends FragmentActivity implements OnMapReadyCallb
     private FusedLocationProviderClient mFusedLocationProviderClient;
 
     private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
-    private static final String COURSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1234;
     private static final float DEFAULT_ZOOM = 10f;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,19 +63,17 @@ public class PgaFindActivity extends FragmentActivity implements OnMapReadyCallb
         mMap = googleMap;
         mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
 
-
-        //Kml addition
+        //json addition
         try {
-            KmlLayer layer = new KmlLayer(mMap, R.raw.kml_sources, getApplicationContext());
-            layer.addLayerToMap();
-            Log.d(TAG, "onMapReady: Kml added to map");
-
-        } catch (XmlPullParserException e) {
-            e.printStackTrace();
+            GeoJsonLayer layer = new GeoJsonLayer(mMap, sources, getApplicationContext());
+                    layer.addLayerToMap();
+            Log.d(TAG, "GEOJSONLAYER: map added ");
+            Toast.makeText(this, "GEOJSON ADDED", Toast.LENGTH_LONG).show();
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
-
         if(mLocationPermissionsGranted){
             getDeviceLocation();
 
@@ -108,7 +105,6 @@ public class PgaFindActivity extends FragmentActivity implements OnMapReadyCallb
         });
 
     }
-
 
     private void getDeviceLocation(){
         Log.d(TAG, "getDeviceLocation: getting the device's current location");
@@ -164,6 +160,7 @@ public class PgaFindActivity extends FragmentActivity implements OnMapReadyCallb
         }
         else{ ActivityCompat.requestPermissions(this,permissions,LOCATION_PERMISSION_REQUEST_CODE); }
     }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         Log.d(TAG, "onRequestPermissionsResult: called");
