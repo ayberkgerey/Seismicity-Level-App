@@ -11,6 +11,5 @@
   <ul>
   <li>GeoJSON Layer</li>
   <li>Google Maps</li>
-  <li>Firestore</li>
   
 </ul>
