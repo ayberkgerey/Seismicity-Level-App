@@ -63,6 +63,7 @@ public class PgaFindActivity extends FragmentActivity implements OnMapReadyCallb
         mMap = googleMap;
         mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
 
+
         //json addition
         try {
             GeoJsonLayer layer = new GeoJsonLayer(mMap, sources, getApplicationContext());
