@@ -23,13 +23,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.maps.android.data.geojson.GeoJsonLayer;
-
-import org.json.JSONException;
-
-import java.io.IOException;
-
-import static com.example.pgafinder.R.raw.sources;
 
 
 public class PgaFindActivity extends FragmentActivity implements OnMapReadyCallback {
@@ -63,18 +56,9 @@ public class PgaFindActivity extends FragmentActivity implements OnMapReadyCallb
         mMap = googleMap;
         mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
 
-
         //json addition
-        try {
-            GeoJsonLayer layer = new GeoJsonLayer(mMap, sources, getApplicationContext());
-                    layer.addLayerToMap();
-            Log.d(TAG, "GEOJSONLAYER: map added ");
-            Toast.makeText(this, "GEOJSON ADDED", Toast.LENGTH_LONG).show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+
+
         if(mLocationPermissionsGranted){
             getDeviceLocation();
 
