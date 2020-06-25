@@ -3,13 +3,13 @@
 
   <ul>
   <li>Geolocation added.</li>
-  <li>Google Maps initialized</li>
+  <li>Google Maps Libs initialized</li>
   <li>KML Layer Used</li>
 </ul>
 
 <h3>Topics</h3>
   <ul>
-  <li>GeoJSON Layer</li>
-  <li>Google Maps</li>
+  <li>JSON Data </li>
+  <li>Google Maps to find location</li>
   
 </ul>
