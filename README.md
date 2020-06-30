@@ -11,5 +11,6 @@
   <ul>
   <li>JSON Data </li>
   <li>Google Maps to find location</li>
+  <li>DTO Generator</li>
   
 </ul>
