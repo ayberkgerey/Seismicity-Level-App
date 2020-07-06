@@ -1,10 +1,12 @@
 package com.example.pgafinder;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -12,6 +14,9 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
+import com.example.pgafinder.models.Attributes;
+import com.example.pgafinder.models.Coordinator;
+import com.example.pgafinder.models.Feature;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -23,12 +28,20 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.common.reflect.TypeToken;
+import com.google.gson.Gson;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.Type;
+import java.util.List;
 
 
 public class PgaFindActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private static final String TAG = "PgaFindActivity";
 
+    private TextView textLocation;
     private MapView mMapView;
     private GoogleMap mMap;
     private Boolean mLocationPermissionsGranted = false;
@@ -38,16 +51,36 @@ public class PgaFindActivity extends FragmentActivity implements OnMapReadyCallb
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1234;
     private static final float DEFAULT_ZOOM = 10f;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pga_find);
 
+
+        textLocation = (TextView) findViewById(R.id.textLocation);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         getLocationPermission();
 
-        //ArcGis Map
+        String jsonFileString = getJsonFromAssets(getApplicationContext(), "sources.json");
+        Log.i("data", jsonFileString);
 
+        Gson gson = new Gson();
+        Type listUserType = new TypeToken<Coordinator>() { }.getType();
+
+        Coordinator coordinateList = gson.fromJson(jsonFileString, listUserType);
+
+        Log.i("data", jsonFileString);
+        for (Feature f : coordinateList.getFeatures()){
+            Attributes attributes = f.getAttributes();
+            Integer symbolID = attributes.getSymbolID();
+            List<List<List<Float>>> rings = f.getGeometry().getRings();
+
+            List<List<Float>> listsZERO = rings.get(0);
+            List<Float> cooZERO = listsZERO.get(0);
+
+            cooZERO.get(0);//coordinates
+        }
     }
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -55,9 +88,6 @@ public class PgaFindActivity extends FragmentActivity implements OnMapReadyCallb
         Log.d(TAG, "onMapReady: Ready");
         mMap = googleMap;
         mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-
-        //json addition
-
 
         if(mLocationPermissionsGranted){
             getDeviceLocation();
@@ -80,6 +110,7 @@ public class PgaFindActivity extends FragmentActivity implements OnMapReadyCallb
                 markerOptions.position(latLng);
                 //set Latitude And Longitude On Marker
                 markerOptions.title(latLng.latitude+" : " + latLng.longitude);
+
                 //Clear the Previously Click position
                 mMap.clear();
                 //Zoom The Marker
@@ -90,7 +121,6 @@ public class PgaFindActivity extends FragmentActivity implements OnMapReadyCallb
         });
 
     }
-
     private void getDeviceLocation(){
         Log.d(TAG, "getDeviceLocation: getting the device's current location");
 
@@ -121,11 +151,14 @@ public class PgaFindActivity extends FragmentActivity implements OnMapReadyCallb
         }
     }
     private void moveCamera(LatLng latlng , float zoom, String title){
-        Log.d(TAG, "moveCamera: moving the camera to lat: "+ latlng.latitude + ", lng: "+ latlng.longitude);
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latlng,zoom));
+        //Log.d(TAG, "moveCamera: moving the camera to lat: "+ latlng.latitude + ", lng: "+ latlng.longitude);
+       // mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latlng,zoom));
 
-        MarkerOptions options = new MarkerOptions().position(latlng).title(title);
-        mMap.addMarker(options);
+        //textView editing
+        textLocation.setText("lat: " + latlng.latitude + ", lng: "+ latlng.longitude);
+
+        //MarkerOptions options = new MarkerOptions().position(latlng).title(title);
+        //mMap.addMarker(options);
     }
     private void initMap(){
 
@@ -145,7 +178,6 @@ public class PgaFindActivity extends FragmentActivity implements OnMapReadyCallb
         }
         else{ ActivityCompat.requestPermissions(this,permissions,LOCATION_PERMISSION_REQUEST_CODE); }
     }
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         Log.d(TAG, "onRequestPermissionsResult: called");
@@ -166,6 +198,25 @@ public class PgaFindActivity extends FragmentActivity implements OnMapReadyCallb
                 initMap();
             }
         }
+    }
+
+    private String getJsonFromAssets(Context context, String fileName) {
+        String jsonString;
+        try {
+            InputStream is = context.getAssets().open(fileName);
+
+            int size = is.available();
+            byte[] buffer = new byte[size];
+            is.read(buffer);
+            is.close();
+
+            jsonString = new String(buffer, "UTF-8");
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        return jsonString;
     }
 
 }
