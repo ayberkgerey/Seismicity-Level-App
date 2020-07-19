@@ -30,6 +30,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
+import com.google.maps.android.quadtree.PointQuadTree;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -47,6 +48,8 @@ public class PgaFindActivity extends FragmentActivity implements OnMapReadyCallb
     private Boolean mLocationPermissionsGranted = false;
     private FusedLocationProviderClient mFusedLocationProviderClient;
 
+    private PointQuadTree pointQuadTree;
+
     private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1234;
     private static final float DEFAULT_ZOOM = 10f;
@@ -61,26 +64,7 @@ public class PgaFindActivity extends FragmentActivity implements OnMapReadyCallb
         textLocation = (TextView) findViewById(R.id.textLocation);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         getLocationPermission();
-
-        String jsonFileString = getJsonFromAssets(getApplicationContext(), "sources.json");
-        Log.i("data", jsonFileString);
-
-        Gson gson = new Gson();
-        Type listUserType = new TypeToken<Coordinator>() { }.getType();
-
-        Coordinator coordinateList = gson.fromJson(jsonFileString, listUserType);
-
-        Log.i("data", jsonFileString);
-        for (Feature f : coordinateList.getFeatures()){
-            Attributes attributes = f.getAttributes();
-            Integer symbolID = attributes.getSymbolID();
-            List<List<List<Float>>> rings = f.getGeometry().getRings();
-
-            List<List<Float>> listsZERO = rings.get(0);
-            List<Float> cooZERO = listsZERO.get(0);
-
-            cooZERO.get(0);//coordinates
-        }
+        readJson();
     }
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -136,7 +120,7 @@ public class PgaFindActivity extends FragmentActivity implements OnMapReadyCallb
                             Log.d(TAG, "onComplete: found location!");
                             Location currentLocation = (Location) task.getResult();
 
-                            moveCamera(new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude()),DEFAULT_ZOOM,currentLocation.getLatitude() +" : " + currentLocation.getLongitude());
+                            showLocation(new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude()));
 
                         }else{
                             Log.d(TAG, "onComplete: current location is null");
@@ -150,15 +134,12 @@ public class PgaFindActivity extends FragmentActivity implements OnMapReadyCallb
             Log.e(TAG, "getDeviceLocation: Security Exception: "+ e.getMessage());
         }
     }
-    private void moveCamera(LatLng latlng , float zoom, String title){
-        //Log.d(TAG, "moveCamera: moving the camera to lat: "+ latlng.latitude + ", lng: "+ latlng.longitude);
-       // mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latlng,zoom));
+    private void showLocation(LatLng latlng){
 
         //textView editing
-        textLocation.setText("lat: " + latlng.latitude + ", lng: "+ latlng.longitude);
+        textLocation.setText(latlng.latitude +" , "+ latlng.longitude);
 
-        //MarkerOptions options = new MarkerOptions().position(latlng).title(title);
-        //mMap.addMarker(options);
+
     }
     private void initMap(){
 
@@ -217,6 +198,34 @@ public class PgaFindActivity extends FragmentActivity implements OnMapReadyCallb
         }
 
         return jsonString;
+    }
+
+    private void readJson(){
+
+        String jsonFileString = getJsonFromAssets(getApplicationContext(), "sources.json");
+        Log.i("data", jsonFileString);
+
+        Gson gson = new Gson();
+        Type listUserType = new TypeToken<Coordinator>() { }.getType();
+
+        Coordinator coordinateList = gson.fromJson(jsonFileString, listUserType);
+
+        Log.i("data", jsonFileString);
+
+        for (Feature f : coordinateList.getFeatures()){
+
+            Attributes attributes = f.getAttributes();
+            Integer symbolID = attributes.getSymbolID();
+            List<List<List<Float>>> rings = f.getGeometry().getRings();
+
+            List<List<Float>> listsZERO = rings.get(0);
+            List<Float> cooZERO = listsZERO.get(0);
+            cooZERO.get(0);//coordinate x
+            cooZERO.get(1);//coordinate y
+
+
+        }
+
     }
 
 }
