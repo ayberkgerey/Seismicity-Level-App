@@ -14,6 +14,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
+import com.example.pgafinder.dataStructures.myPoint;
 import com.example.pgafinder.models.Attributes;
 import com.example.pgafinder.models.Coordinator;
 import com.example.pgafinder.models.Feature;
@@ -53,6 +54,8 @@ public class PgaFindActivity extends FragmentActivity implements OnMapReadyCallb
     private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1234;
     private static final float DEFAULT_ZOOM = 10f;
+
+
 
 
     @Override
@@ -215,13 +218,15 @@ public class PgaFindActivity extends FragmentActivity implements OnMapReadyCallb
         for (Feature f : coordinateList.getFeatures()){
 
             Attributes attributes = f.getAttributes();
-            Integer symbolID = attributes.getSymbolID();
-            List<List<List<Float>>> rings = f.getGeometry().getRings();
+            double symbolID = attributes.getSymbolID();
 
-            List<List<Float>> listsZERO = rings.get(0);
-            List<Float> cooZERO = listsZERO.get(0);
-            cooZERO.get(0);//coordinate x
-            cooZERO.get(1);//coordinate y
+            for (List<List<Float>> ring :f.getGeometry().getRings()) {
+
+                List<Float> coordinates = ring.get(0);
+                myPoint point = new myPoint(coordinates.get(0),coordinates.get(1),symbolID);
+                pointQuadTree.add((PointQuadTree.Item) point);
+
+            }
 
 
         }
